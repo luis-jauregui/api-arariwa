@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Security.Claims;
 using Dapper;
 using Microsoft.AspNetCore.Identity;
 
@@ -28,39 +29,50 @@ public class RoleStore : IRoleStore<IdentityRole>
         throw new NotImplementedException();
     }
 
-    public Task<IdentityResult> DeleteAsync(IdentityRole role, CancellationToken cancellationToken)
+    public async Task<IdentityResult> DeleteAsync(IdentityRole role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string query = "DELETE FROM AspNetRoles WHERE Id = @Id";
+
+        var result = await _dbConnection.ExecuteAsync(query, new { Id = role.Id });
+
+        return result > 0 ? IdentityResult.Success : IdentityResult.Failed();
     }
 
     public Task<string> GetRoleIdAsync(IdentityRole role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return Task.FromResult(role.Id);
     }
 
     public Task<string> GetRoleNameAsync(IdentityRole role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // Devuelve el nombre del rol.
+        return Task.FromResult(role.Name);
     }
 
     public Task SetRoleNameAsync(IdentityRole role, string roleName, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // Establece el nombre del rol.
+        role.Name = roleName;
+        return Task.CompletedTask;
     }
 
     public Task<string> GetNormalizedRoleNameAsync(IdentityRole role, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // Devuelve el nombre normalizado del rol.
+        return Task.FromResult(role.NormalizedName);
     }
 
     public Task SetNormalizedRoleNameAsync(IdentityRole role, string normalizedName, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // Establece el nombre normalizado del rol.
+        role.NormalizedName = normalizedName;
+        return Task.CompletedTask;
     }
 
-    public Task<IdentityRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+    public async Task<IdentityRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        const string query = "SELECT * FROM AspNetRoles WHERE Id = @Id";
+        return await _dbConnection.QueryFirstOrDefaultAsync<IdentityRole>(query, new { Id = roleId });
     }
 
     public async Task<IdentityRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
