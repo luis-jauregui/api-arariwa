@@ -1,7 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ApiArariwa.Auditoria;
 using ApiArariwa.Dapper;
+using ApiArariwa.Dapper.Auditoria;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,14 +32,14 @@ public class AuthController : ControllerBase
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly IConfiguration _configuration;
-    private readonly GenericRepository _repository;
+    private readonly IAuditoriaRepository _auditoria;
 
-    public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration, GenericRepository repository)
+    public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration, IAuditoriaRepository auditoria)
     {
-        _userManager = userManager;
+        _userManager   = userManager;
         _signInManager = signInManager;
         _configuration = configuration;
-        _repository = repository;
+        _auditoria     = auditoria;
     }
 
     [HttpPost("register")]
@@ -62,17 +65,33 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login(LoginRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
+        
+        var userLog = new UserLoginLogs
+        {
+            UserId       = user.Id,
+            AttemptDate  = DateTime.Now,
+            IpAddress    = Request.HttpContext.Connection.RemoteIpAddress.ToString(),
+        };
+        
         if (user == null)
         {
+            userLog.IsSuccessful = false;
+            await _auditoria.SetUserLoginLogsAsync(userLog);
             return Unauthorized("Usuario o contraseña incorrectos.");
         }
 
         var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+        
         if (!result.Succeeded)
         {
+            userLog.IsSuccessful = false;
+            await _auditoria.SetUserLoginLogsAsync(userLog);
             return Unauthorized("Usuario o contraseña incorrectos.");
         }
-
+        
+        userLog.IsSuccessful = true;
+        await _auditoria.SetUserLoginLogsAsync(userLog);
+        
         var token = await GenerateJwtToken(user);
         return Ok(new { Token = token });
     }

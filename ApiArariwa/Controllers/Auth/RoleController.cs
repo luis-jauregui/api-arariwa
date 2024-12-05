@@ -19,9 +19,9 @@ public class RolesController : ControllerBase
 {
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly GenericRepository _repository;
+    private readonly DapperRepository _repository;
 
-    public RolesController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, GenericRepository repository)
+    public RolesController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, DapperRepository repository)
     {
         _userManager = userManager;
         _roleManager = roleManager;

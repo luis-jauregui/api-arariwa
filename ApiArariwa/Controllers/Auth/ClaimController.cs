@@ -21,9 +21,9 @@ public class ClaimRequest
 [Route("api/[controller]")]
 public class ClaimController : ControllerBase
 {
-    private readonly GenericRepository _repository;
+    private readonly DapperRepository _repository;
 
-    public ClaimController(GenericRepository repository)
+    public ClaimController(DapperRepository repository)
     {
         _repository = repository;
     }

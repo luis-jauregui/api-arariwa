@@ -4,11 +4,11 @@ using Microsoft.Data.SqlClient;
 
 namespace ApiArariwa.Dapper;
 
-public class GenericRepository
+public class DapperRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;
 
-    public GenericRepository(SqlConnectionFactory connectionFactory)
+    public DapperRepository(SqlConnectionFactory connectionFactory)
     {
         _connectionFactory = connectionFactory;
     }

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using ApiArariwa.Controllers;
 using ApiArariwa.Dapper;
+using ApiArariwa.Dapper.Auditoria;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +28,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 builder.Services.AddScoped<IUserStore<IdentityUser>, UserStore>();
 builder.Services.AddScoped<IRoleStore<IdentityRole>, RoleStore>();
 builder.Services.AddScoped<SignInManager<IdentityUser>>();
-builder.Services.AddScoped<GenericRepository>();
+builder.Services.AddScoped<DapperRepository>();
+builder.Services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
 builder.Services.AddScoped<SqlConnectionFactory>();
 
 builder.Services.AddTransient<IDbConnection>(sp =>
