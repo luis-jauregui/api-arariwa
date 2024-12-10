@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiArariwa.Dapper.Auditoria;
 
-public interface IAuditoriaRepository
+public interface IAuditoriaService
 {
     public Task<string> SetUserLoginLogsAsync(UserLoginLogs userLoginLogs);
 }

@@ -14,13 +14,14 @@ namespace ApiArariwa.Controllers;
 
 public class RegisterRequest
 {
-    public string FullName { get; set; }
+    public string UserName { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
 }
 
 public class LoginRequest
 {
+    public string UserName { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
 }
@@ -32,9 +33,9 @@ public class AuthController : ControllerBase
     private readonly UserManager<IdentityUser> _userManager;
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly IConfiguration _configuration;
-    private readonly IAuditoriaRepository _auditoria;
+    private readonly IAuditoriaService _auditoria;
 
-    public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration, IAuditoriaRepository auditoria)
+    public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration, IAuditoriaService auditoria)
     {
         _userManager   = userManager;
         _signInManager = signInManager;
@@ -47,11 +48,12 @@ public class AuthController : ControllerBase
     {
         var user = new IdentityUser
         {
-            UserName = request.Email,
+            UserName = request.UserName,
             Email = request.Email
         };
 
         var result = await _userManager.CreateAsync(user, request.Password);
+        
         if (!result.Succeeded)
         {
             return BadRequest(result.Errors);
@@ -64,7 +66,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
-        var user = await _userManager.FindByEmailAsync(request.Email);
+        var user = await _userManager.FindByNameAsync(request.UserName);
         
         var userLog = new UserLoginLogs
         {

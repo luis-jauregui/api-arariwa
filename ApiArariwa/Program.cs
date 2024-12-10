@@ -4,9 +4,9 @@ using System.Text;
 using ApiArariwa.Controllers;
 using ApiArariwa.Dapper;
 using ApiArariwa.Dapper.Auditoria;
+using ApiArariwa.Services.User;
 using Microsoft.Data.SqlClient;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -29,7 +29,8 @@ builder.Services.AddScoped<IUserStore<IdentityUser>, UserStore>();
 builder.Services.AddScoped<IRoleStore<IdentityRole>, RoleStore>();
 builder.Services.AddScoped<SignInManager<IdentityUser>>();
 builder.Services.AddScoped<DapperRepository>();
-builder.Services.AddScoped<IAuditoriaRepository, AuditoriaRepository>();
+builder.Services.AddScoped<IAuditoriaService, AuditoriaService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<SqlConnectionFactory>();
 
 builder.Services.AddTransient<IDbConnection>(sp =>

@@ -3,12 +3,12 @@ using Dapper;
 
 namespace ApiArariwa.Dapper.Auditoria;
 
-public class AuditoriaRepository: IAuditoriaRepository
+public class AuditoriaService: IAuditoriaService
 {
     
     private readonly DapperRepository _repository;
     
-    public AuditoriaRepository (DapperRepository repository)
+    public AuditoriaService (DapperRepository repository)
     {
         _repository = repository;
     }
